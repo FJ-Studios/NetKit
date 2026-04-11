@@ -62,7 +62,7 @@ public extension NetworkProtocol {
             .eraseToAnyPublisher()
     }
 
-    func sendRequest<T: Decodable>(endpoint: EndPoint, resultHandler: @escaping @Sendable (Result<T, NetworkError>) -> Void) {
+    func sendRequest<T: Decodable & Sendable>(endpoint: EndPoint, resultHandler: @escaping @Sendable (Result<T, NetworkError>) -> Void) {
         let urlRequest = createRequest(endPoint: endpoint)
         let urlTask = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
             if let error {
