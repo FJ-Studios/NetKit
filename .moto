@@ -1,0 +1,26 @@
+# .moto -- DNS for code
+# This file tells AI agents where to find the project's architecture cache.
+
+[project]
+name = "NetKit"
+description = "HTTP and WebSocket networking"
+language = "swift"
+build_system = "spm"
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/obyw-one/NetKit"
+
+[architecture]
+modules = ["NetKit"]
+
+[cache]
+commit = "0b251cf72"
+schema = "1"
+branches = ["main", "develop"]
+
+[cache.local]
+path = ".moto-cache/"
+
+[attribution]
+authors = ["Jeoffrey Thirot <jeoffrey@obyw.one>"]
+organization = "OBYW.one SASU"
+created = "2026-04-20"
