@@ -1,0 +1,34 @@
+{
+  "dependencies" : [
+    {
+      "isLocal" : true,
+      "name" : "CoreKit",
+      "path" : "..\/CoreKit"
+    }
+  ],
+  "name" : "NetKit",
+  "platforms" : [
+    "iOS 17",
+    "macOS 14"
+  ],
+  "targets" : [
+    {
+      "dependencies" : [
+        "NetKit"
+      ],
+      "name" : "NetKitTests",
+      "path" : "Tests\/NetKitTests",
+      "sourceFiles" : 0,
+      "type" : "test"
+    },
+    {
+      "dependencies" : [
+        "CoreKit"
+      ],
+      "name" : "NetKit",
+      "path" : "Sources\/NetKit",
+      "sourceFiles" : 0,
+      "type" : "library"
+    }
+  ]
+}

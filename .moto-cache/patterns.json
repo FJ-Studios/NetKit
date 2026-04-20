@@ -1,0 +1,28 @@
+[
+  {
+    "description" : "Typed error enums conforming to Error\/LocalizedError",
+    "example" : "enum DLNABrowserError: Error, Sendable {\n    case invalidURL\n    case invalidResponse\n    case networkError(String)\n}",
+    "files" : [
+      "Sources\/NetworkKit\/DLNA\/DLNABrowser.swift",
+      "Sources\/NetworkKit\/NetworkError.swift"
+    ],
+    "name" : "error_pattern"
+  },
+  {
+    "description" : "Mock types with call tracking and shouldThrow injection",
+    "example" : "final class MockNetworkService: NetworkProtocol, @unchecked Sendable {\n\n    \/\/ MARK: - Configurable State\n\n    \/\/\/ The raw data to return from requests. Encode your expected model into this.\n    public var resultData: Data?\n\n    \/\/\/ An optional error to throw instead of ... }",
+    "files" : [
+      "Sources\/NetworkKit\/MockNetworkService.swift",
+      "Tests\/NetworkKitTests\/MockNetworkServiceTests.swift"
+    ],
+    "name" : "mock_pattern"
+  },
+  {
+    "description" : "Endpoint enums for API routing",
+    "example" : "enum XxxEndPoint: EndPoint { ... }",
+    "files" : [
+      "Sources\/NetworkKit\/EndPoint.swift"
+    ],
+    "name" : "endpoint_pattern"
+  }
+]

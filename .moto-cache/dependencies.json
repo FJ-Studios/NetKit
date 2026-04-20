@@ -1,0 +1,17 @@
+{
+  "NetworkKit" : [
+    "Combine",
+    "CoreKit",
+    "Foundation",
+    "Network",
+    "os"
+  ],
+  "NetworkKitTests" : [
+    "Combine",
+    "Foundation",
+    "Testing"
+  ],
+  "unknown" : [
+    "PackageDescription"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "modules" : [
+    {
+      "name" : "NetworkKit",
+      "public_functions" : [
+
+      ],
+      "public_protocols" : [
+        "DLNABrowserDelegate",
+        "EndPoint",
+        "EndPointMediaUrl",
+        "EndPointUrl",
+        "NetworkProtocol",
+        "SSDPDelegate"
+      ],
+      "public_types" : [
+        "BrowseResult",
+        "ContentDirectory",
+        "DLNABrowser",
+        "DLNABrowserError",
+        "DLNAMediaItem",
+        "DLNAServer",
+        "DiscoveredServer",
+        "InterfaceType",
+        "MessageType",
+        "MockNetworkService",
+        "NetworkError",
+        "NetworkMonitor",
+        "NetworkService",
+        "RequestMethod",
+        "SSDPAdvertiser",
+        "SSDPBrowser",
+        "SSDPConstants",
+        "SSDPMessage",
+        "SSDPSearchResponder",
+        "WebSocketClient",
+        "WebSocketMessage",
+        "WebSocketState"
+      ]
+    }
+  ]
+}
