@@ -1,6 +1,0 @@
-{
-  "framework" : "swift-testing",
-  "mockPattern" : "Mock* classes\/structs",
-  "testCount" : 50,
-  "testFiles" : 4
-}
