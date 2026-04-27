@@ -177,6 +177,103 @@ public final class DLNABrowser: @unchecked Sendable {
         return items
     }
 
+    // MARK: - Container browse (MiniDLNA / Plex / Jellyfin expose only containers at root)
+
+    /// A UPnP container (folder) entry from a `BrowseDirectChildren` response.
+    public struct DLNAContainer: Sendable, Identifiable, Equatable, Hashable {
+        public let id: String
+        public let title: String
+        public let childCount: Int?
+
+        public init(id: String, title: String, childCount: Int?) {
+            self.id = id
+            self.title = title
+            self.childCount = childCount
+        }
+    }
+
+    /// Parsed children of a `BrowseDirectChildren` call: items AND containers.
+    public struct DLNABrowseEntries: Sendable, Equatable, Hashable {
+        public let containers: [DLNAContainer]
+        public let items: [DLNAMediaItem]
+
+        public init(containers: [DLNAContainer], items: [DLNAMediaItem]) {
+            self.containers = containers
+            self.items = items
+        }
+
+        public var isEmpty: Bool { containers.isEmpty && items.isEmpty }
+    }
+
+    /// Browse a container and return BOTH folders and media items.
+    /// Root of MiniDLNA/Plex/Jellyfin holds only containers — `browse()`
+    /// drops them and returns empty, so the iPad UI showed nothing.
+    public func browseEntries(server: DiscoveredServer, objectID: String = "0") async throws -> DLNABrowseEntries {
+        let soapBody = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+                    s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+          <s:Body>
+            <u:Browse xmlns:u="\(SSDPConstants.contentDirectoryType)">
+              <ObjectID>\(objectID)</ObjectID>
+              <BrowseFlag>BrowseDirectChildren</BrowseFlag>
+              <Filter>*</Filter>
+              <StartingIndex>0</StartingIndex>
+              <RequestedCount>0</RequestedCount>
+              <SortCriteria></SortCriteria>
+            </u:Browse>
+          </s:Body>
+        </s:Envelope>
+        """
+        var request = URLRequest(url: URL(string: server.contentDirectoryURL)!)
+        request.httpMethod = "POST"
+        request.setValue("text/xml; charset=\"utf-8\"", forHTTPHeaderField: "Content-Type")
+        request.setValue("\"\(SSDPConstants.contentDirectoryType)#Browse\"", forHTTPHeaderField: "SOAPAction")
+        request.httpBody = soapBody.data(using: .utf8)
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let soap = String(data: data, encoding: .utf8) ?? ""
+        return Self.parseEntriesFromSOAP(soap)
+    }
+
+    static func parseEntriesFromSOAP(_ soap: String) -> DLNABrowseEntries {
+        guard let resultStart = soap.range(of: "<Result>"),
+              let resultEnd = soap.range(of: "</Result>") else {
+            return DLNABrowseEntries(containers: [], items: [])
+        }
+        var didl = String(soap[resultStart.upperBound..<resultEnd.lowerBound])
+        didl = didl
+            .replacingOccurrences(of: "&lt;", with: "<")
+            .replacingOccurrences(of: "&gt;", with: ">")
+            .replacingOccurrences(of: "&amp;", with: "&")
+            .replacingOccurrences(of: "&quot;", with: "\"")
+            .replacingOccurrences(of: "&apos;", with: "'")
+        return DLNABrowseEntries(containers: parseDidlContainers(didl), items: parseDidlLite(didl))
+    }
+
+    static func parseDidlContainers(_ didl: String) -> [DLNAContainer] {
+        var out: [DLNAContainer] = []
+        var searchStart = didl.startIndex
+        while let cStart = didl.range(of: "<container ", range: searchStart..<didl.endIndex) {
+            guard let cEnd = didl.range(of: "</container>", range: cStart.upperBound..<didl.endIndex) else { break }
+            let xml = String(didl[cStart.lowerBound...cEnd.upperBound])
+            if let container = parseSingleContainer(xml) { out.append(container) }
+            searchStart = cEnd.upperBound
+        }
+        return out
+    }
+
+    private static func parseSingleContainer(_ xml: String) -> DLNAContainer? {
+        guard let idRange = xml.range(of: "id=\""),
+              let idEnd = xml.range(of: "\"", range: idRange.upperBound..<xml.endIndex) else { return nil }
+        let id = String(xml[idRange.upperBound..<idEnd.lowerBound])
+        let title = extractTag(from: xml, tag: "dc:title") ?? "Folder"
+        var childCount: Int?
+        if let raw = extractAttribute(from: xml, element: "container", attribute: "childCount") {
+            childCount = Int(raw)
+        }
+        return DLNAContainer(id: id, title: title, childCount: childCount)
+    }
+
     private static func parseSingleItem(_ xml: String) -> DLNAMediaItem? {
         // Extract id attribute
         guard let idRange = xml.range(of: "id=\""),

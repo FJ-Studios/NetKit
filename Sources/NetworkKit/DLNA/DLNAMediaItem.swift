@@ -1,7 +1,7 @@
 import Foundation
 
 /// A media item exposed via DLNA Content Directory.
-public struct DLNAMediaItem: Sendable, Identifiable, Equatable {
+public struct DLNAMediaItem: Sendable, Identifiable, Equatable, Hashable {
     public let id: String
     public let title: String
     public let creator: String?
