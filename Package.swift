@@ -15,7 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../CoreKit"),
+        .package(url: "https://github.com/obyw-one/CoreKit.git", branch: "main"),
     ],
     targets: [
         .target(
