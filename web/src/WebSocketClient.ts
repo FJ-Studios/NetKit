@@ -182,6 +182,7 @@ export class WebSocketClient {
       };
 
       ws.onclose = (_event: CloseEvent) => {
+        if (this.socket == null) return; // already handled by disconnect()
         this.socket = null;
         this.setState(WebSocketState.disconnected);
       };
@@ -195,9 +196,12 @@ export class WebSocketClient {
   /** Gracefully closes the connection. */
   disconnect(): void {
     if (this.socket == null) return;
-    this.socket.close(1000, "Normal closure");
+    const sock = this.socket;
     this.socket = null;
     this.setState(WebSocketState.disconnected);
+    // Close after state change so onclose handler (which checks socket == null)
+    // does not emit a second state-change event.
+    sock.close(1000, "Normal closure");
   }
 
   // -------------------------------------------------------------------------

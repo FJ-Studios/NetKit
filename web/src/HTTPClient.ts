@@ -90,7 +90,9 @@ export class HTTPClient {
     this.retryableStatusCodes =
       options.retry?.retryableStatusCodes ?? DEFAULT_RETRYABLE_STATUS_CODES;
     this.defaultHeaders = options.defaultHeaders ?? {};
-    this.fetchImpl = options.fetchImpl ?? globalThis.fetch.bind(globalThis);
+    // fetchImpl is resolved lazily at call-time if not injected, so that
+    // test frameworks (e.g. msw) can patch globalThis.fetch after construction.
+    this.fetchImpl = options.fetchImpl ?? ((...args) => globalThis.fetch(...args));
   }
 
   // -------------------------------------------------------------------------
@@ -159,10 +161,10 @@ export class HTTPClient {
 
     // Mirrors Swift: guard 200..<400 ~= httpResponse.statusCode
     if (response.status < 200 || response.status >= 400) {
-      const rawHeaders = [...response.headers.entries()]
-        .map(([k, v]) => `${k}: ${v}`)
-        .join("\n");
-      throw NetworkError.unexpectedStatusCode(response.status, rawHeaders);
+      const rawHeaders: string[] = [];
+      response.headers.forEach((v, k) => rawHeaders.push(`${k}: ${v}`));
+      const headersStr = rawHeaders.join("\n");
+      throw NetworkError.unexpectedStatusCode(response.status, headersStr);
     }
 
     let text: string;

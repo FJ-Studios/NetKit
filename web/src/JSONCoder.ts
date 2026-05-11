@@ -47,26 +47,32 @@ export class JSONCoder {
 
   /** Serialises a value to a JSON string, applying the date strategy. */
   encode(value: unknown): string {
-    return JSON.stringify(value, this.replacer());
+    if (this.dateEncoding === "epoch") {
+      // JSON.stringify calls Date.toJSON() before the replacer sees it,
+      // converting Date → ISO string. We pre-process the tree to swap Dates
+      // for their epoch-ms number before stringifying.
+      return JSON.stringify(this.substituteEpoch(value));
+    }
+    // iso8601: Date.toJSON() already produces an ISO string — pass through.
+    return JSON.stringify(value);
+  }
+
+  private substituteEpoch(value: unknown): unknown {
+    if (value instanceof Date) return value.getTime();
+    if (Array.isArray(value)) return value.map((v) => this.substituteEpoch(v));
+    if (value !== null && typeof value === "object") {
+      const out: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+        out[k] = this.substituteEpoch(v);
+      }
+      return out;
+    }
+    return value;
   }
 
   /** Serialises a value to a plain object (structuredClone-safe). */
   encodeToObject(value: unknown): unknown {
     return JSON.parse(this.encode(value)) as unknown;
-  }
-
-  private replacer(): (key: string, value: unknown) => unknown {
-    const strategy = this.dateEncoding;
-    return (_key: string, value: unknown): unknown => {
-      if (value instanceof Date) {
-        if (strategy === "epoch") {
-          return value.getTime();
-        }
-        // "iso8601" — default
-        return value.toISOString();
-      }
-      return value;
-    };
   }
 
   // -------------------------------------------------------------------------

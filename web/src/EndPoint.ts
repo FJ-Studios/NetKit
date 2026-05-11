@@ -121,9 +121,12 @@ export function buildRequest(endpoint: EndPoint): Request {
     }
   }
 
-  return new Request(url.toString(), {
+  const init: RequestInit = {
     method: endpoint.method,
     headers,
-    body,
-  });
+  };
+  if (body !== undefined) {
+    init.body = body;
+  }
+  return new Request(url.toString(), init);
 }

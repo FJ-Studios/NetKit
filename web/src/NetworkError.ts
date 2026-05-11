@@ -102,7 +102,11 @@ export class NetworkError extends Error {
     statusCode: number,
     headers?: string,
   ): NetworkError {
-    return new NetworkError({ kind: "unexpectedStatusCode", statusCode, headers });
+    const variant: UnexpectedStatusCodeError =
+      headers !== undefined
+        ? { kind: "unexpectedStatusCode", statusCode, headers }
+        : { kind: "unexpectedStatusCode", statusCode };
+    return new NetworkError(variant);
   }
 
   /** Mirrors `NetworkError.invalidData`. */
@@ -155,7 +159,7 @@ export class NetworkError extends Error {
   // -------------------------------------------------------------------------
 
   toJSON(): Record<string, unknown> {
-    return { kind: this.variant.kind, message: this.message, ...this.variant };
+    return { message: this.message, ...this.variant };
   }
 
   static fromJSON(raw: Record<string, unknown>): NetworkError {
