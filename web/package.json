@@ -1,0 +1,46 @@
+{
+  "name": "@fj-studios/netkit-web",
+  "version": "0.1.0",
+  "description": "TypeScript HTTP and WebSocket networking — TS sibling of FJ-Studios/NetKit (Swift)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c rollup.config.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run typecheck && npm run build"
+  },
+  "keywords": [
+    "networking",
+    "http",
+    "websocket",
+    "fetch",
+    "typescript",
+    "fj-studios",
+    "netkit"
+  ],
+  "author": "FJ-Studios",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@vitest/coverage-v8": "^2.1.8",
+    "msw": "^2.6.4",
+    "rollup": "^4.24.0",
+    "tslib": "^2.7.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
+  }
+}
