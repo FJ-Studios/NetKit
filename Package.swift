@@ -15,7 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/FJ-Studios/CoreKit.git", branch: "main"),
+        .package(url: "https://github.com/FJ-Studios/CoreKit.git", from: "0.1.0"),
     ],
     targets: [
         .target(
