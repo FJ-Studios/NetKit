@@ -92,6 +92,7 @@ struct MDNSAdvertiserTests {
     // MARK: - Service type convention documentation test
 
     @Test("service type convention: shikki NATS broker should use _shi-nats._tcp")
+    @MainActor
     func serviceTypeConvention() {
         // This test documents the recommended service ID for shikki consumers.
         // The advertiser itself does not enforce any naming convention;
