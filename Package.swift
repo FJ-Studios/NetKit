@@ -21,7 +21,8 @@ let package = Package(
         .target(
             name: "NetKit",
             dependencies: ["CoreKit"],
-            path: "Sources/NetworkKit"
+            path: "Sources/NetworkKit",
+            exclude: ["Bonjour/README.md"]
         ),
         .testTarget(
             name: "NetKitTests",
