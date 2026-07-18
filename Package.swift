@@ -3,15 +3,20 @@
 import PackageDescription
 
 let package = Package(
-    name: "NetKit",
+    name: "NetKit",  // repo name unchanged; MODULE renamed ShiNetKit (v1.0.0)
     platforms: [
         .iOS(.v17),
         .macOS(.v14),
     ],
     products: [
+        // v1.0.0 BREAKING (2026-07-18): module renamed NetKit → ShiNetKit.
+        // 'NetKit' collides with fuzzy-swift's internal NetKit target; SPM
+        // moduleAliases proved NONDETERMINISTIC (silent inert-alias builds
+        // that crash-loop at runtime vs hard manifest errors — shikki
+        // incident a623764f). Unique names at the source, no aliases, ever.
         .library(
-            name: "NetKit",
-            targets: ["NetKit"]
+            name: "ShiNetKit",
+            targets: ["ShiNetKit"]
         ),
     ],
     dependencies: [
@@ -19,13 +24,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "NetKit",
+            name: "ShiNetKit",
             dependencies: ["CoreKit"],
             path: "Sources/NetworkKit"
         ),
         .testTarget(
-            name: "NetKitTests",
-            dependencies: ["NetKit"],
+            name: "ShiNetKitTests",
+            dependencies: ["ShiNetKit"],
             path: "Tests/NetworkKitTests"
         ),
     ]
