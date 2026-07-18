@@ -6,7 +6,7 @@
 import Combine
 import Foundation
 import Testing
-@testable import NetKit
+@testable import ShiNetKit
 
 // MARK: - Test Model
 
