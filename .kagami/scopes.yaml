@@ -1,0 +1,19 @@
+schema_version: 1
+language: swift
+
+# kagami scope manifest for FJ-Studios/NetKit (module ShiNetKit since v1.0.0).
+scopes:
+  - name: ShiNetKit
+    language: swift
+    packagePath: .
+    modulePatterns:
+      - ShiNetKit
+    typePatterns:
+      - ShiNetKit
+      - Bonjour
+      - MDNSBrowser
+      - MDNSAdvertiser
+      - HTTPClient
+      - WebSocket
+    testFilePatterns:
+      - "**/NetworkKitTests/**/*.swift"
