@@ -10,6 +10,11 @@ import CoreKit
 import Foundation
 
 public protocol NetworkProtocol: Sendable {
+    /// JSON decoder used for all response decoding. Consumers with a
+    /// backend-specific JSON format (custom date/key strategies) inject
+    /// their own; the default preserves NetKit's PocketBase date strategy.
+    var decoder: JSONDecoder { get }
+
     func createRequest(endPoint: EndPoint) -> URLRequest
 
     func sendRequest<T: Decodable & Sendable>(endpoint: EndPoint) async throws -> T
@@ -18,6 +23,10 @@ public protocol NetworkProtocol: Sendable {
 }
 
 public extension NetworkProtocol {
+    /// Default decoder — the historic PocketBase-aware configuration, so
+    /// existing conformers keep their behavior without opting in.
+    var decoder: JSONDecoder { NetworkService.defaultDecoder() }
+
     func createRequest(endPoint: EndPoint) -> URLRequest {
         var urlComponents = URLComponents()
         urlComponents.scheme = endPoint.scheme

@@ -26,8 +26,6 @@ public extension NetworkProtocol {
         AppLog.network.debug("Response data: \(data.prettyJson ?? "[Json invalid]")")
 
         do {
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .custom(decoder.pocketbaseDateDecodingStrategy())
             return try decoder.decode(T.self, from: data)
         } catch let error as DecodingError {
             throw NetworkError.jsonParsingFailed(error)
@@ -49,7 +47,7 @@ public extension NetworkProtocol {
                 }
                 return data
             }
-            .decode(type: T.self, decoder: JSONDecoder())
+            .decode(type: T.self, decoder: decoder)
             .mapError { error -> NetworkError in
                 if let error = error as? DecodingError {
                     return .jsonParsingFailed(error)
@@ -83,7 +81,7 @@ public extension NetworkProtocol {
             }
 
             do {
-                let decodedResponse = try JSONDecoder().decode(T.self, from: data)
+                let decodedResponse = try decoder.decode(T.self, from: data)
                 resultHandler(.success(decodedResponse))
             } catch let error as DecodingError {
                 resultHandler(.failure(NetworkError.jsonParsingFailed(error)))
