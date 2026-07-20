@@ -26,7 +26,8 @@ let package = Package(
         .target(
             name: "ShiNetKit",
             dependencies: ["CoreKit"],
-            path: "Sources/NetworkKit"
+            path: "Sources/NetworkKit",
+            exclude: ["Bonjour/README.md"]
         ),
         .testTarget(
             name: "ShiNetKitTests",
