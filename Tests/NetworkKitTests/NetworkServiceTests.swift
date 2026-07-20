@@ -5,7 +5,7 @@
 
 import Foundation
 import Testing
-@testable import ShiNetKit
+@testable import NetKit
 
 @Suite("NetworkService Tests")
 struct NetworkServiceTests {

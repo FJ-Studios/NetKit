@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import ShiNetKit
+@testable import NetKit
 
 // MARK: - MockBonjourBrowser
 
